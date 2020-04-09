@@ -1,4 +1,1 @@
-pytest_plugins = [
-    'guillotina.tests.fixtures',
-    'backend.tests.fixtures'
-]
+pytest_plugins = ["guillotina.tests.fixtures", "backend.tests.fixtures"]
