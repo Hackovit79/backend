@@ -16,6 +16,8 @@ This example will use python virtual env::
 
   python3.7 -m venv venv
   source venv/bin/activate
+  pip install -r requirements.txt
+  pip install -r test-requirements.txt
   pip install -e .
 
 
