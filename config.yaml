@@ -1,14 +1,12 @@
 ---
 applications:
   - backend
-  - guillotina.contrib.catalog.pg
-  - guillotina.contrib.swagger
 databases:
   db:
     storage: postgresql
-    dsn: postgresql://guillotina@localhost:5432/guillotina
+    dsn: postgresql://guillotina@postgresql:5432/guillotina
     read_only: false
-host: localhost
+host: 0.0.0.0
 port: 8080
 root_user:
   password: root
@@ -21,8 +19,9 @@ auth_token_validators:
   - guillotina.auth.validators.JWTValidator
 cors:
   allow_origin:
-    - http://localhost:8080
-    - "chrome-extension://*"
+    - "*"
+  #  - http://localhost:8080
+  #  - "chrome-extension://*"
   allow_methods:
     - GET
     - POST

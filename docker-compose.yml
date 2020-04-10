@@ -1,0 +1,29 @@
+version: '2'
+services:
+  backend:
+    build: .
+    ports:
+     - 8128:8080
+    depends_on:
+     - postgresql
+     - elasticsearch
+    restart: always
+  postgresql:
+    image: postgres:11.6
+    volumes:
+      - ./volumes/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: guillotina
+      POSTGRES_USER: guillotina
+    mem_limit: 512m
+    restart: always
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.1
+    volumes:
+      - ./volumes/esdata:/usr/share/elasticsearch/data
+    environment:
+     "xpack.security.enabled": null
+     "discovery.type": "single-node"
+     "http.host": "0.0.0.0"
+     "ES_JAVA_OPTS": "-Xms512m -Xmx512m"
+    restart: always

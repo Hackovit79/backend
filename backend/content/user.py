@@ -1,7 +1,7 @@
-from guillotina.contrib.dbusers.content.users import User
-from guillotina.contrib.dbusers.content.users import IUser
 from guillotina import configure
 from guillotina import schema
+from guillotina.contrib.dbusers.content.users import IUser
+from guillotina.contrib.dbusers.content.users import User
 from guillotina.fields.files import CloudFileField
 
 
