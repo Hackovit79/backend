@@ -23,8 +23,10 @@ async def test_meetup_filter(backend_requester):
                     "@type": "Meetup",
                     "title": "Concert directe",
                     "description": "Capitol 1 de molts",
-                    "start": arrow.utcnow().format(),
-                    "end": arrow.utcnow().shift(hours=1).format(),
+                    "start": arrow.utcnow().format("YYYY-MM-DD HH:mm:ss ZZ"),
+                    "end": arrow.utcnow()
+                    .shift(hours=1)
+                    .format("YYYY-MM-DD HH:mm:ss ZZ"),
                     "categories": ["musica"],
                     "subcategories": ["rock"],
                 }
@@ -40,7 +42,7 @@ async def test_meetup_filter(backend_requester):
                     "@type": "Meetup",
                     "title": "Gim",
                     "description": "",
-                    "start": "2020-04-15T01:17:39+00:00",
+                    "start": "2020-04-15T01:08:39+00:00",
                     "end": "2020-04-15T01:18:39+00:00",
                     "categories": ["gim"],
                     "subcategories": [],
@@ -58,8 +60,10 @@ async def test_meetup_filter(backend_requester):
                     "@type": "Meetup",
                     "title": "Gim capitol 2",
                     "description": "",
-                    "start": arrow.utcnow().format(),
-                    "end": arrow.utcnow().shift(hours=1).format(),
+                    "start": arrow.utcnow().format("YYYY-MM-DD HH:mm:ss ZZ"),
+                    "end": arrow.utcnow()
+                    .shift(hours=1)
+                    .format("YYYY-MM-DD HH:mm:ss ZZ"),
                     "categories": ["gim"],
                     "subcategories": [],
                     "links": [
@@ -97,6 +101,13 @@ async def test_meetup_filter(backend_requester):
         )
         assert status == 200
         assert len(response["items"]) == 3
+
+        response, status = await requester(
+            "GET",
+            "/db/guillotina/@meetup-filter?start_date=2020-04-15T02:00:30Z&end_date=2020-04-15T05:00:30Z",
+        )
+        assert status == 200
+        assert len(response["items"]) == 1
 
         response, status = await requester(
             "GET",
