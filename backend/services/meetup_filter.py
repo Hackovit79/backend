@@ -19,12 +19,8 @@ async def meetup_filter(context, request):
     shoulds = []
     el_query = {
         "query": {"bool": {"must": musts, "should": shoulds}},
-        "aggs": {
-            "categories": {
-                "terms": {"field": "categories"}
-            }
-        },
-        "sort": ["start"]
+        "aggs": {"categories": {"terms": {"field": "categories"}}},
+        "sort": ["start"],
     }
 
     if request.query.get("user"):
@@ -65,23 +61,24 @@ async def meetup_filter(context, request):
                 }
             }
         )
-    
+
     if request.query.get("search"):
         shoulds.append(
-            {"match": {
-                "title": {
-                    "query": request.query.get("search"), 
-                    "fuzziness": 2}}}
+            {"match": {"title": {"query": request.query.get("search"), "fuzziness": 2}}}
         )
         shoulds.append(
-            {"match": {
-                "description": {
-                    "query": request.query.get("search"),
-                    "fuzziness": 2}}}
+            {
+                "match": {
+                    "description": {
+                        "query": request.query.get("search"),
+                        "fuzziness": 2,
+                    }
+                }
+            }
         )
         el_query["query"]["bool"]["minimum_should_match"] = 1
 
     es = get_utility(IElasticSearchUtility)
     resp = await es.search_raw(task_vars.container.get(), el_query, size=10)
-    
+
     return json_response(200, resp)
