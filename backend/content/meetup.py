@@ -8,7 +8,6 @@ from zope.interface import Interface
 
 
 class ILink(Interface):
-    index_field("platform", field_mapping={"type": "text"})
     platform = schema.Choice(values=("instagram", "youtube", "facebook"), required=True)
     url = schema.TextLine(required=True)
 
@@ -21,6 +20,16 @@ class IMeetup(interfaces.IItem):
 
     img = CloudFileField(required=False)
 
+    index_field(
+        "links",
+        field_mapping={
+            "type": "nested",
+            "properties": {
+                "platform": {"type": "keyword"},
+                "url": {"type": "keyword", "index": False},
+            },
+        },
+    )
     links = schema.List(value_type=schema.Object(schema=ILink))
 
     index_field("start", field_mapping={"type": "date"})

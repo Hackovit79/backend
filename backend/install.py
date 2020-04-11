@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from guillotina import configure
 from guillotina.addons import Addon
+from guillotina.security.utils import apply_sharing
 from guillotina.utils import get_registry
 
 
@@ -9,6 +10,18 @@ class ManageAddon(Addon):
     @classmethod
     async def install(cls, container, request):
         registry = await get_registry(container)  # noqa
+        await apply_sharing(
+            container,
+            {
+                "prinperm": [
+                    {
+                        "permission": "guillotina.AccessContent",
+                        "principal": "Anonymous User",
+                        "setting": "Allow",
+                    }
+                ]
+            },
+        )
         # install logic here...
 
     @classmethod

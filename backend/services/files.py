@@ -1,3 +1,4 @@
+from backend.content.meetup import IMeetup
 from backend.content.user import ICustomUser
 from guillotina import configure
 from guillotina.api.files import DownloadFile
@@ -11,9 +12,9 @@ from guillotina.api.files import DownloadFile
     allow_access=True,
 )
 @configure.service(
-    context=ICustomUser,
+    context=IMeetup,
     method="GET",
-    name="@download/{field_name}/{filename}",
+    name="@download/{field_name}",
     permission="guillotina.Public",
     allow_access=True,
 )
