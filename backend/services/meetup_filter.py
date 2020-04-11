@@ -2,10 +2,6 @@ from backend.utils import json_response
 from guillotina import configure
 from guillotina import task_vars
 from guillotina.component import get_utility
-from guillotina.content import create_content_in_container
-from guillotina.contrib.dbusers.content.users import User
-from guillotina.event import notify
-from guillotina.events import ObjectAddedEvent
 from guillotina.interfaces import IContainer
 from guillotina_elasticsearch.interfaces import IElasticSearchUtility
 
@@ -18,7 +14,9 @@ from guillotina_elasticsearch.interfaces import IElasticSearchUtility
     allow_access=True,
 )
 async def meetup_filter(context, request):
-    el_query = {"query": {"bool": {"must": []}}}
+    el_query = {
+        "query": {"bool": {"must": [{"term": {"type_name": "Meetup"}}]}},
+    }
     if request.query.get("user"):
         el_query["query"]["bool"]["must"].append(
             {"term": {"user": request.query.get("user")}}
@@ -52,5 +50,5 @@ async def meetup_filter(context, request):
         )
 
     es = get_utility(IElasticSearchUtility)
-    resp = await es.search_raw(task_vars.container.get(), el_query, size=10,)
+    resp = await es.search_raw(task_vars.container.get(), el_query, size=10)
     return json_response(200, resp)

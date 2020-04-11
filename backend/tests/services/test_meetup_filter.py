@@ -73,20 +73,27 @@ async def test_meetup_filter(backend_requester):
         # Wait until guillotina sends documents to ES
         await asyncio.sleep(2)
 
+        response, status = await requester("GET", "/db/guillotina/@meetup-filter")
+        assert status == 200
+        assert len(response["items"]) == 3
+
         response, status = await requester(
             "GET",
             "/db/guillotina/@meetup-filter?user=masipcat&category=gim&start_date=2020-04-11&end_date=2020-04-20",
         )
         assert status == 200
+        assert len(response["items"]) == 2
 
         response, status = await requester(
             "GET",
             "/db/guillotina/@meetup-filter?user=masipcat&category=gim&start_date=2020-04-11&end_date=2020-04-20&platform=instagram",
         )
         assert status == 200
+        assert len(response["items"]) == 1
 
         response, status = await requester(
             "GET",
             "/db/guillotina/@meetup-filter?start_date=2020-04-11&end_date=2020-04-20",
         )
         assert status == 200
+        assert len(response["items"]) == 3
