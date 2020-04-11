@@ -50,11 +50,6 @@ def index_user(ob):
     return ob.__parent__.id
 
 
-@index_field.with_accessor(IMeetup, "platform", field_mapping={"type": "keyword"})
-def index_platform(ob):
-    return [link["platform"] for link in ob.links or []]
-
-
 @configure.contenttype(
     type_name="Meetup", schema=IMeetup, globally_addable=False,
 )
