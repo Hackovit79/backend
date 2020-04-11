@@ -19,10 +19,6 @@ async def test_upload_download_avatar(backend_requester):
         )
         assert status == 200
 
-        response, status = await requester("GET", "/db/guillotina/users/masipcat")
-        assert status == 200
-        filename = response["avatar"]["filename"]
-
         response, status = await requester(
             "GET", "/db/guillotina/users/masipcat/", authenticated=False,
         )
@@ -30,7 +26,7 @@ async def test_upload_download_avatar(backend_requester):
 
         response, status = await requester(
             "GET",
-            f"/db/guillotina/users/masipcat/@download/avatar/{filename}",
+            "/db/guillotina/users/masipcat/@download/avatar",
             authenticated=False,
         )
         assert status == 200
