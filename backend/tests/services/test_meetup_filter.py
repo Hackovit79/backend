@@ -22,7 +22,7 @@ async def test_meetup_filter(backend_requester):
                 {
                     "@type": "Meetup",
                     "title": "Concert directe",
-                    "description": "",
+                    "description": "Capitol 1 de molts",
                     "start": arrow.utcnow().format(),
                     "end": arrow.utcnow().shift(hours=1).format(),
                     "categories": ["musica"],
@@ -56,7 +56,7 @@ async def test_meetup_filter(backend_requester):
             data=json.dumps(
                 {
                     "@type": "Meetup",
-                    "title": "Gim2",
+                    "title": "Gim capitol 2",
                     "description": "",
                     "start": arrow.utcnow().format(),
                     "end": arrow.utcnow().shift(hours=1).format(),
@@ -97,3 +97,17 @@ async def test_meetup_filter(backend_requester):
         )
         assert status == 200
         assert len(response["items"]) == 3
+
+        response, status = await requester(
+            "GET",
+            "/db/guillotina/@meetup-filter?start_date=2020-04-11&end_date=2020-04-20&search=capitol",
+        )
+        assert status == 200
+        assert len(response["items"]) == 2
+
+        response, status = await requester(
+            "GET",
+            "/db/guillotina/@meetup-filter?start_date=2020-04-11&end_date=2020-04-20&search=cpitols",
+        )
+        assert status == 200
+        assert len(response["items"]) == 2
