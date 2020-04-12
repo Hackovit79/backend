@@ -5,6 +5,8 @@ from guillotina.component import get_utility
 from guillotina.interfaces import IContainer
 from guillotina_elasticsearch.interfaces import IElasticSearchUtility
 
+import arrow
+
 
 @configure.service(
     context=IContainer,
@@ -41,8 +43,13 @@ async def meetup_filter(context, request):
                 }
             }
         )
-    elif request.query.get("start_date") and request.query.get("end_date") is None:
+    elif request.query.get("start_date"):
         musts.append({"term": {"start": request.query.get("start_date")}})
+    elif request.query.get("end_date"):
+        musts.append({"term": {"end": request.query.get("end_date")}})
+    else:
+        # By default, we only return non-finished meetups
+        musts.append({"range": {"end": {"gte": arrow.utcnow().isoformat()}}})
 
     if request.query.get("platform"):
         musts.append(

@@ -1,9 +1,13 @@
 from guillotina import configure
+from guillotina import error_reasons
+from guillotina.component import query_multi_adapter
 from guillotina.content import create_content_in_container
 from guillotina.contrib.dbusers.content.users import User
 from guillotina.event import notify
 from guillotina.events import ObjectAddedEvent
 from guillotina.interfaces import IContainer
+from guillotina.interfaces import IResourceDeserializeFromJson
+from guillotina.response import ErrorResponse
 
 
 @configure.service(
@@ -14,12 +18,21 @@ from guillotina.interfaces import IContainer
     allow_access=True,
 )
 async def register(context, request):
-    ALLOWED_FIELDS = ("description", "username", "email", "name", "password")
     users_folder = await context.async_get("users")
-    payload = await request.json()
-    fields = {k: v for k, v in payload.items() if k in ALLOWED_FIELDS}
+    data = await request.json()
     user: User = await create_content_in_container(
-        users_folder, "User", fields["username"], check_security=False, **fields
+        users_folder, "User", data["username"], check_security=False,
     )
+
+    deserializer = query_multi_adapter((user, request), IResourceDeserializeFromJson)
+    if deserializer is None:
+        return ErrorResponse(
+            "DeserializationError",
+            "Cannot deserialize type {}".format(user.type_name),
+            status=412,
+            reason=error_reasons.DESERIALIZATION_FAILED,
+        )
+    await deserializer(data, validate_all=True, create=True)
+
     await notify(ObjectAddedEvent(user))
     return {"id": user.username}

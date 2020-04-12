@@ -3,6 +3,7 @@ from backend.tests.utils import register_user
 from backend.tests.utils import USER_DATA
 
 import arrow
+import base64
 import json
 import pytest
 
@@ -13,6 +14,8 @@ async def test_create_meetup(backend_requester):
     async with backend_requester as requester:
         await register_user(requester, **USER_DATA)
         await login_user(requester, USER_DATA["username"], USER_DATA["password"])
+
+        binary = b"X" * 1024
 
         response, status = await requester(
             "POST",
@@ -26,6 +29,7 @@ async def test_create_meetup(backend_requester):
                     "end": arrow.utcnow().shift(hours=1).format(),
                     "categories": ["musica"],
                     "subcategories": ["rock", "pop-rock"],
+                    "img": {"data": str(base64.b64encode(binary), "utf-8")},
                 }
             ),
         )
@@ -36,3 +40,9 @@ async def test_create_meetup(backend_requester):
             "GET", f"/db/guillotina/users/masipcat/{meetup_id}",
         )
         assert status == 200
+
+        response, status = await requester(
+            "GET", f"/db/guillotina/users/masipcat/{meetup_id}/@download/img",
+        )
+        assert status == 200
+        assert response == binary
