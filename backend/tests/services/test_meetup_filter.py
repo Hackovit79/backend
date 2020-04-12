@@ -1,4 +1,3 @@
-from backend.tests.utils import login_user
 from backend.tests.utils import register_user
 from backend.tests.utils import USER_DATA
 
