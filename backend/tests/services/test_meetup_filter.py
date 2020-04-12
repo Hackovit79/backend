@@ -13,11 +13,11 @@ pytestmark = pytest.mark.asyncio
 async def test_meetup_filter(backend_requester):
     async with backend_requester as requester:
         await register_user(requester, **USER_DATA)
-        await login_user(requester, USER_DATA["username"], USER_DATA["password"])
+        await register_user(requester, **{**USER_DATA, "username": "user2"})
 
         response, status = await requester(
             "POST",
-            "/db/guillotina/users/masipcat",
+            "/db/guillotina/users/user2",
             data=json.dumps(
                 {
                     "@type": "Meetup",
@@ -45,6 +45,7 @@ async def test_meetup_filter(backend_requester):
                     "categories": ["gim"],
                     "subcategories": [],
                     "links": [{"platform": "youtube", "url": "www.youtube.com/live"}],
+                    "img": {"data": "YWRmYXNkZmFzZGY="},
                 }
             ),
         )
@@ -99,6 +100,7 @@ async def test_meetup_filter(backend_requester):
         )
         assert status == 200
         assert len(response["items"]) == 3
+        assert {True, False, False} == {i["has_img"] for i in response["items"]}
 
         response, status = await requester(
             "GET",

@@ -13,10 +13,10 @@ class ManageAddon(Addon):
         await apply_sharing(
             container,
             {
-                "prinperm": [
+                "roleperm": [
                     {
+                        "role": "guillotina.Anonymous",
                         "permission": "guillotina.AccessContent",
-                        "principal": "Anonymous User",
                         "setting": "Allow",
                     }
                 ]

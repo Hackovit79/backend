@@ -13,10 +13,10 @@ class ILink(Interface):
 
 
 class IMeetup(interfaces.IItem):
-    title = schema.TextLine()
+    title = schema.TextLine(required=True)
 
     index_field("description", field_mapping={"type": "text"})
-    description = schema.Text()
+    description = schema.Text(required=True)
 
     img = CloudFileField(required=False)
 
@@ -48,6 +48,11 @@ class IMeetup(interfaces.IItem):
 @index_field.with_accessor(IMeetup, "user", field_mapping={"type": "keyword"})
 def index_user(ob):
     return ob.__parent__.id
+
+
+@index_field.with_accessor(IMeetup, "has_img", field_mapping={"type": "boolean"})
+def index_has_image(ob):
+    return not not ob.img
 
 
 @configure.contenttype(
